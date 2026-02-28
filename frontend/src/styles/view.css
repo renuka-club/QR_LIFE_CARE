@@ -1,0 +1,351 @@
+/* =========================
+   VIEW RECORDS BACKGROUND
+========================= */
+.view-records-container {
+  min-height: 100vh;
+  background:
+
+    url("C:\Users\kattu\OneDrive\Desktop\qr-life-care\frontend\asserts\qrimage.png") center / cover no-repeat fixed;
+  color: white;
+}
+
+/* =========================
+   HEADER
+========================= */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 25px 30px;
+}
+
+/* =========================
+   CONTENT
+========================= */
+.records-content {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+  color: white;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.empty-state {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 40px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+/* =========================
+   HEADER CARD
+========================= */
+.records-header {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+/* =========================
+   GRID
+========================= */
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* =========================
+   REPORT CARD
+========================= */
+.report-card {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.report-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.report-date {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.report-card-body p {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+/* =========================
+   VIEW BUTTON
+========================= */
+.btn-view-small {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  border-radius: 20px;
+  border: none;
+  padding: 8px 14px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* =========================
+   MODAL OVERLAY
+========================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* =========================
+   MODAL CONTENT
+========================= */
+.modal-content.report-modal {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 35px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+.close-btn {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+}
+
+/* =========================
+   MODAL TITLE
+========================= */
+.report-modal h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+  color: #cdefff;
+}
+
+/* =========================
+   REPORT DETAILS GRID
+========================= */
+.report-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+/* =========================
+   DETAIL SECTIONS
+========================= */
+.detail-section {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.detail-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  color: #8fd3ff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 6px;
+}
+
+.detail-section p {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* =========================
+   FILES GRID
+========================= */
+.files-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+}
+
+.file-item {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+
+.file-preview img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  /* 🔥 shows full image */
+  border-radius: 8px;
+  background: #000;
+}
+
+
+.file-preview p {
+  font-size: 0.8rem;
+  word-break: break-word;
+}
+
+/* DOWNLOAD BUTTON */
+.download-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.download-btn:hover {
+  opacity: 0.9;
+}
+
+
+.file-preview.document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.doc-icon {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+/* =========================
+   AI ANALYSIS
+========================= */
+.ai-analysis {
+  grid-column: span 2;
+  background: rgba(0, 128, 255, 0.15);
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .report-details {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content.report-modal {
+    padding: 25px;
+  }
+}
+/* =========================
+   AI ANALYSIS STYLES
+========================= */
+
+.ai-start-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.ai-start-container p {
+  color: #cdefff;
+  margin-bottom: 20px;
+}
+
+.btn-ai-analyze {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 198, 255, 0.5);
+  transition: transform 0.2s;
+}
+
+.btn-ai-analyze:hover {
+  transform: scale(1.05);
+}
+
+.btn-ai-analyze:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.ai-results {
+  line-height: 1.6;
+}
+
+.ai-subsection {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+}
+
+.ai-subsection strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #8fd3ff;
+}
+
+.ai-subsection ul {
+  margin-left: 20px;
+  margin-bottom: 0;
+}
+
+.ai-subsection li {
+  margin-bottom: 4px;
+}
+
+.ai-reminders-badge {
+  display: inline-block;
+  margin-top: 15px;
+  background: rgba(0, 255, 128, 0.2);
+  color: #00ff80;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border: 1px solid rgba(0, 255, 128, 0.3);
+}
+

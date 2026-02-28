@@ -1,0 +1,26 @@
+2026-01-23T09:47:21.891Z [UPLOAD] Request received for user: JOHN29
+2026-01-23T09:47:22.086Z UPLOAD ERROR: E11000 duplicate key error collection: qr-life-care.reports index: reportId_1 dup key: { reportId: null } 
+Stack: MongoServerError: E11000 duplicate key error collection: qr-life-care.reports index: reportId_1 dup key: { reportId: null }
+    at C:\Users\kattu\OneDrive\Desktop\qr-life-care\backend\node_modules\mongodb\lib\operations\insert.js:50:33
+    at C:\Users\kattu\OneDrive\Desktop\qr-life-care\backend\node_modules\mongodb\lib\operations\command.js:84:64
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-01-23T16:12:03.407Z [UPLOAD] Request received for user: JOHN29
+2026-01-23T16:12:03.569Z UPLOAD ERROR: E11000 duplicate key error collection: qr-life-care.reports index: reportId_1 dup key: { reportId: null } 
+Stack: MongoServerError: E11000 duplicate key error collection: qr-life-care.reports index: reportId_1 dup key: { reportId: null }
+    at C:\Users\kattu\OneDrive\Desktop\qr-life-care\backend\node_modules\mongodb\lib\operations\insert.js:50:33
+    at C:\Users\kattu\OneDrive\Desktop\qr-life-care\backend\node_modules\mongodb\lib\operations\command.js:84:64
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-01-23T16:24:00.327Z [UPLOAD] Request received for user: JOHN29
+2026-01-25T09:29:07.127Z [UPLOAD] Request received for user: JOHNDOE23
+2026-01-25T10:37:10.387Z [UPLOAD] Request received for user: DFCGVHJKVBC21
+2026-01-25T11:48:50.476Z [UPLOAD] Request received for user: RENUKAKATTUMURI21
+2026-01-25T17:14:51.617Z [UPLOAD] Request received for user: RENUKAKATTUMURI35
+2026-01-25T17:17:37.075Z [UPLOAD] Request received for user: RENUKAKATTUMURI35
+2026-01-25T17:18:07.083Z UPLOAD ERROR: read ECONNRESET 
+Stack: MongoServerSelectionError: read ECONNRESET
+    at Timeout._onTimeout (C:\Users\kattu\OneDrive\Desktop\qr-life-care\backend\node_modules\mongodb\lib\sdam\topology.js:278:38)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+2026-01-28T06:48:49.863Z [UPLOAD] Request received for user: JOHNDOE24
+2026-02-09T06:40:24.953Z [UPLOAD] Request received for user: BHAVANA21
+2026-02-27T15:49:13.370Z [UPLOAD] Request received for user: KRENU21
