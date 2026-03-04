@@ -76,8 +76,11 @@ function Home() {
             <button className="btn-secondary-glass" onClick={() => setShowDemo(true)}>
               <Smartphone size={18} /> Live Demo
             </button>
-            <button className="btn-secondary-glass" onClick={() => window.location.href = '/scan-qr'}>
+            <button className="btn-secondary-glass" onClick={() => navigate('/scan-qr')}>
               <QrCode size={18} /> Scan QR Code
+            </button>
+            <button className="btn-primary-glow" style={{ background: 'linear-gradient(45deg, #a78bfa, #c084fc)' }} onClick={() => navigate('/scan-qr?mode=biometric')}>
+              <Fingerprint size={18} /> Biometric QR Scan
             </button>
           </motion.div>
         </div>

@@ -19,7 +19,8 @@ import {
     Pill,
     Camera,
     Trash2,
-    Fingerprint
+    Fingerprint,
+    Home
 } from 'lucide-react';
 import { startRegistration } from '@simplewebauthn/browser';
 import '../styles/profile.css';
@@ -164,10 +165,16 @@ const ProfilePage = () => {
                         <h1 className="profile-title">My Profile</h1>
                         <p className="profile-subtitle">Manage your personal and medical information</p>
                     </div>
-                    <button onClick={handleLogout} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <LogOut size={18} />
-                        Logout
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button onClick={() => navigate('/')} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Home size={18} />
+                            Home
+                        </button>
+                        <button onClick={handleLogout} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <LogOut size={18} />
+                            Logout
+                        </button>
+                    </div>
                 </div>
 
                 <div className="profile-grid">

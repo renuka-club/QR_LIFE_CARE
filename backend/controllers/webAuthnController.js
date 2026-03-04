@@ -21,11 +21,11 @@ exports.generateRegistration = async (req, res) => {
         const options = await generateRegistrationOptions({
             rpName,
             rpID,
-            userID: user.userId,
+            userID: new Uint8Array(Buffer.from(user.userId)),
             userName: user.email,
             attestationType: 'none',
-            excludeCredentials: user.devices.map(dev => ({
-                id: dev.credentialID,
+            excludeCredentials: user.devices.filter(dev => dev.credentialID).map(dev => ({
+                id: Buffer.from(dev.credentialID).toString('base64url'),
                 type: 'public-key',
                 transports: dev.transports,
             })),
@@ -52,12 +52,13 @@ exports.verifyRegistration = async (req, res) => {
         const { body } = req;
 
         const expectedChallenge = user.currentChallenge;
+        const expectedOrigin = req.get('origin') || origin;
         let verification;
         try {
             verification = await verifyRegistrationResponse({
                 response: body,
                 expectedChallenge,
-                expectedOrigin: origin,
+                expectedOrigin,
                 expectedRPID: rpID,
             });
         } catch (error) {
@@ -67,17 +68,17 @@ exports.verifyRegistration = async (req, res) => {
 
         const { verified, registrationInfo } = verification;
         if (verified && registrationInfo) {
-            const { credentialPublicKey, credentialID, counter, credentialDeviceType, credentialBackedUp } = registrationInfo;
+            const { credential, credentialDeviceType, credentialBackedUp } = registrationInfo;
             const newDevice = {
-                credentialPublicKey,
-                credentialID,
-                counter,
+                credentialPublicKey: Buffer.from(credential.publicKey),
+                credentialID: Buffer.from(credential.id, 'base64url'),
+                counter: credential.counter,
                 credentialDeviceType,
                 credentialBackedUp,
-                transports: body.response.transports || [],
+                transports: credential.transports || body.response.transports || [],
             };
 
-            const isDuplicate = user.devices.some(dev => dev.credentialID.toString('base64url') === credentialID.toString('base64url'));
+            const isDuplicate = user.devices.some(dev => dev.credentialID.toString('base64url') === credential.id);
             if (!isDuplicate) {
                 user.devices.push(newDevice);
                 user.currentChallenge = undefined;
@@ -113,8 +114,8 @@ exports.generateAuthentication = async (req, res) => {
 
         const options = await generateAuthenticationOptions({
             rpID,
-            allowCredentials: user.devices.map(dev => ({
-                id: dev.credentialID,
+            allowCredentials: user.devices.filter(dev => dev.credentialID).map(dev => ({
+                id: Buffer.from(dev.credentialID).toString('base64url'),
                 type: 'public-key',
                 transports: dev.transports,
             })),
@@ -144,7 +145,7 @@ exports.verifyAuthentication = async (req, res) => {
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
         const expectedChallenge = user.currentChallenge;
-        const device = user.devices.find(dev => dev.credentialID.toString('base64url') === response.id);
+        const device = user.devices.find(dev => dev.credentialID.toString('base64') === Buffer.from(response.id, 'base64url').toString('base64'));
 
         if (!device) return res.status(400).json({ success: false, message: 'Device not recognized' });
 
@@ -153,11 +154,11 @@ exports.verifyAuthentication = async (req, res) => {
             verification = await verifyAuthenticationResponse({
                 response: response,
                 expectedChallenge,
-                expectedOrigin: origin,
+                expectedOrigin: req.get('origin') || origin,
                 expectedRPID: rpID,
-                authenticator: {
-                    credentialPublicKey: device.credentialPublicKey,
-                    credentialID: device.credentialID,
+                credential: {
+                    id: Buffer.from(device.credentialID).toString('base64url'),
+                    publicKey: new Uint8Array(device.credentialPublicKey),
                     counter: device.counter,
                     transports: device.transports,
                 },
