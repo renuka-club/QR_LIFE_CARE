@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build"
+  },
   "dependencies": {
     "mongodb": "^7.0.0"
   }
