@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Shield, Zap, ArrowRight, QrCode, HeartPulse, UserPlus, FileText, Smartphone, Lock, Globe, Heart, X, Phone, AlertTriangle, ChevronDown, ChevronUp, Database, Server, CheckCircle, Fingerprint } from 'lucide-react';
 import Header from '../components/Header';
+import { authService } from '../services/auth';
 import './Home.css';
+
+import { TextRoll } from '../components/ui/text-roll';
 
 function Home() {
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
   const [calling, setCalling] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      authService.getCurrentUser()
+        .then(res => {
+          if (res.success && res.data) {
+            setUserData(res.data);
+          }
+        })
+        .catch(err => console.error("Could not fetch user data for demo", err));
+    }
+  }, []);
 
   const handleCall = () => {
     setCalling(true);
@@ -55,7 +71,7 @@ function Home() {
           </motion.div>
 
           <motion.h1 variants={fadeInUp} className="hero-title">
-            QR LIFE <span className="text-gradient">CARE</span>
+            <TextRoll getEnterDelay={(i) => i * 0.05} getExitDelay={(i) => i * 0.05 + 0.1}>QR LIFE</TextRoll> <span><TextRoll letterClassName="text-gradient" getEnterDelay={(i) => i * 0.05 + 0.5} getExitDelay={(i) => i * 0.05 + 0.6}>CARE</TextRoll></span>
           </motion.h1>
 
           <motion.p variants={fadeInUp} className="subtitle">
@@ -305,9 +321,9 @@ function Home() {
                     exit={{ opacity: 0 }}
                   >
                     <div className="caller-info">
-                      <div className="caller-avatar">JD</div>
+                      <div className="caller-avatar">{userData && userData.emergencyContact ? userData.emergencyContact.substring(0, 2).toUpperCase() : 'JD'}</div>
                       <h2>Calling...</h2>
-                      <h3>Jane Doe</h3>
+                      <h3>{userData && userData.emergencyContact ? userData.emergencyContact : 'Jane Doe'}</h3>
                       <p>Mobile via QR Life</p>
                     </div>
                     <div className="call-actions">
@@ -337,22 +353,30 @@ function Home() {
                   </div>
 
                   <div className="demo-profile">
-                    <div className="demo-avatar">JS</div>
-                    <h3>John Smith</h3>
-                    <p>Male, 34 Years</p>
-                    <div className="demo-blood">A+</div>
+                    <div className="demo-avatar">{userData ? userData.fullName.substring(0, 2).toUpperCase() : 'JS'}</div>
+                    <h3>{userData ? userData.fullName : 'John Smith'}</h3>
+                    <p>{userData ? `${userData.gender.charAt(0).toUpperCase() + userData.gender.slice(1)}, ${userData.age} Years` : 'Male, 34 Years'}</p>
+                    <div className="demo-blood">{userData ? userData.bloodGroup : 'A+'}</div>
                   </div>
 
                   <div className="demo-section">
                     <h4><Activity size={14} /> Allergies</h4>
-                    <div className="demo-tag red">Penicillin</div>
-                    <div className="demo-tag red">Peanuts</div>
+                    {userData && userData.allergies && userData.allergies.toLowerCase() !== 'none' ? (
+                      userData.allergies.split(',').map((allergy, i) => (
+                        <div key={i} className="demo-tag red">{allergy.trim()}</div>
+                      ))
+                    ) : (
+                      <>
+                        <div className="demo-tag red">Penicillin</div>
+                        <div className="demo-tag red">Peanuts</div>
+                      </>
+                    )}
                   </div>
 
                   <div className="demo-section">
                     <h4><Phone size={14} /> Emergency Contact</h4>
                     <div className="demo-contact">
-                      <span>Jane Doe (Wife)</span>
+                      <span>{userData ? userData.emergencyContact : 'Jane Doe (Wife)'}</span>
                       <button className="demo-call-btn" onClick={handleCall}>Call</button>
                     </div>
                   </div>

@@ -121,25 +121,31 @@ const analyzeReportWithGemini = async (report) => {
         // Only process images
         if (file.mimetype.startsWith('image/')) {
           try {
-            // Construct absolute path. 
-            // Note: report.files[i].path is relative like 'uploads/file.jpg'
-            // We need absolute path or relative to root where server.js runs
-            // __dirname is usually /backend/controllers
-            // file.path is usually uploads/filename.ext (relative to root)
-            // So we need to go up one level from __dirname to reach root, then define full path
-            const imagePath = path.resolve(__dirname, '..', file.path);
+            const FileModel = require('../models/File');
+            const dbFile = await FileModel.findOne({ filename: file.filename });
 
-            if (fs.existsSync(imagePath)) {
-              const fileData = fs.readFileSync(imagePath);
+            if (dbFile) {
               const imagePart = {
                 inlineData: {
-                  data: fileData.toString('base64'),
-                  mimeType: file.mimetype
+                  data: dbFile.data.toString('base64'),
+                  mimeType: dbFile.mimetype
                 }
               };
               imageParts.push(imagePart);
             } else {
-              try { fs.appendFileSync(logPath, `[IMAGE MISSING] ${imagePath}\n`); } catch (e) { }
+              const imagePath = path.resolve(__dirname, '..', file.path);
+              if (fs.existsSync(imagePath)) {
+                const fileData = fs.readFileSync(imagePath);
+                const imagePart = {
+                  inlineData: {
+                    data: fileData.toString('base64'),
+                    mimeType: file.mimetype
+                  }
+                };
+                imageParts.push(imagePart);
+              } else {
+                try { fs.appendFileSync(logPath, `[IMAGE MISSING] ${file.path}\n`); } catch (e) { }
+              }
             }
           } catch (err) {
             console.error(`Failed to read image file: ${file.path}`, err);

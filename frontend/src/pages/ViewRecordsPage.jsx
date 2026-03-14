@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ClipboardList, ArrowLeft, FolderOpen, FilePlus, Eye, X, FileText, Download, Bot, Sparkles, Mail, RefreshCw, Pill, CheckCircle, Activity, Stethoscope, Building2 } from 'lucide-react';
 import { aiService } from '../services/auth';
 import "../styles/view.css";
 
@@ -112,232 +114,266 @@ function ViewRecordsPage() {
           onClick={() => navigate(`/emergency/${userId}`)}
           className="back-btn"
         >
-          ← Back
+          <ArrowLeft size={18} /> Back
         </button>
-        <h1>📋 Medical Records</h1>
+        <h1><ClipboardList size={32} /> Medical Records</h1>
       </header>
 
       <div className="records-content">
         {reports.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">📂</div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="empty-state"
+          >
+            <div className="empty-icon"><FolderOpen size={64} /></div>
             <h2>No Medical Records Found</h2>
             <p>No reports have been uploaded for this user yet.</p>
             <button
               onClick={() => navigate(`/upload/${userId}`)}
-              className="btn btn-primary"
+              className="btn-ai-analyze"
+              style={{ margin: '20px auto 0' }}
             >
-              📄 Upload First Report
+              <FilePlus size={20} /> Upload First Report
             </button>
-          </div>
+          </motion.div>
         ) : (
           <>
             <div className="records-header">
               <h2>Total Reports: {reports.length}</h2>
             </div>
 
-            <div className="reports-grid">
+            <motion.div
+              className="reports-grid"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+              }}
+            >
               {reports.map((report) => (
-                <div key={report.reportId || report._id} className="report-card">
+                <motion.div
+                  key={report.reportId || report._id}
+                  className="report-card"
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
+                  }}
+                >
                   <div className="report-card-header">
-                    <h3>{report.reportType.replace('-', ' ').toUpperCase()}</h3>
+                    <h3><FileText size={18} /> {report.reportType.replace('-', ' ').toUpperCase()}</h3>
                     <span className="report-date">
                       {new Date(report.reportDate).toLocaleDateString()}
                     </span>
                   </div>
 
                   <div className="report-card-body">
-                    <p><strong>Doctor:</strong> {report.doctorName || 'N/A'}</p>
-                    <p><strong>Hospital:</strong> {report.hospitalName || 'N/A'}</p>
-                    <p><strong>Files:</strong> {report.files?.length || 0}</p>
+                    <p><strong><Stethoscope size={16} /> Doctor:</strong> {report.doctorName || 'N/A'}</p>
+                    <p><strong><Building2 size={16} /> Hospital:</strong> {report.hospitalName || 'N/A'}</p>
+                    <p><strong><FolderOpen size={16} /> Files:</strong> {report.files?.length || 0}</p>
                     {report.notes && (
-                      <p><strong>Notes:</strong> {report.notes.substring(0, 50)}...</p>
+                      <p><strong><ClipboardList size={16} /> Notes:</strong> {report.notes.substring(0, 50)}...</p>
                     )}
                   </div>
 
                   <div className="report-card-footer">
                     <button
                       onClick={() => viewReportDetails(report)}
-                      className="btn btn-view-small"
+                      className="btn-view-small"
                     >
-                      👁️ View Details
+                      <Eye size={16} /> View Details
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </>
         )}
       </div>
 
       {/* ================= MODAL ================= */}
-      {showModal && selectedReport && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div
-            className="modal-content report-modal"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {showModal && selectedReport && (
+          <motion.div
+            className="modal-overlay"
+            onClick={closeModal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <button className="close-btn" onClick={closeModal}>&times;</button>
+            <motion.div
+              className="modal-content report-modal"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <button className="close-btn" onClick={closeModal}><X size={24} /></button>
 
-            <h2>📄 Report Details</h2>
+              <h2><FileText size={28} /> Report Details</h2>
 
-            <div className="report-details">
+              <div className="report-details">
 
-              {/* REPORT INFO */}
-              <div className="detail-section">
-                <h3>Report Information</h3>
-                <p><strong>Type:</strong> {selectedReport.reportType.toUpperCase()}</p>
-                <p><strong>Date:</strong> {new Date(selectedReport.reportDate).toLocaleDateString()}</p>
-                <p><strong>Doctor:</strong> {selectedReport.doctorName || 'Not specified'}</p>
-                <p><strong>Hospital:</strong> {selectedReport.hospitalName || 'Not specified'}</p>
-                {selectedReport.notes && (
-                  <p><strong>Notes:</strong> {selectedReport.notes}</p>
-                )}
-              </div>
-
-              {/* FILES */}
-              <div className="detail-section">
-                <h3>Uploaded Files ({selectedReport.files.length})</h3>
-
-                <div className="files-list">
-                  {selectedReport.files.map((file, index) => (
-                    <div key={index} className="file-item">
-
-                      {file.mimetype.startsWith('image/') ? (
-                        <div className="file-preview">
-                          <img
-                            src={`${FILE_BASE}/${file.path}`}
-                            alt={file.originalName}
-                          />
-                          <p>{file.originalName}</p>
-                        </div>
-                      ) : (
-                        <div className="file-preview document">
-                          <div className="doc-icon">📄</div>
-                          <p>{file.originalName}</p>
-                          <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                        </div>
-                      )}
-
-                      {/* 🔽 FORCE DOWNLOAD */}
-                      <button
-                        className="download-btn"
-                        onClick={() => handleDownload(file)}
-                      >
-                        ⬇ Download
-                      </button>
-
-                    </div>
-                  ))}
+                {/* REPORT INFO */}
+                <div className="detail-section">
+                  <h3><Activity size={20} /> Report Information</h3>
+                  <p><strong>Type:</strong> {selectedReport.reportType.toUpperCase()}</p>
+                  <p><strong>Date:</strong> {new Date(selectedReport.reportDate).toLocaleDateString()}</p>
+                  <p><strong>Doctor:</strong> {selectedReport.doctorName || 'Not specified'}</p>
+                  <p><strong>Hospital:</strong> {selectedReport.hospitalName || 'Not specified'}</p>
+                  {selectedReport.notes && (
+                    <p><strong>Notes:</strong> {selectedReport.notes}</p>
+                  )}
                 </div>
-              </div>
 
-              {/* AI ANALYSIS SECTION */}
-              <div className="detail-section ai-analysis">
-                <h3>🤖 AI Health Assistant</h3>
+                {/* FILES */}
+                <div className="detail-section">
+                  <h3><FolderOpen size={20} /> Uploaded Files ({selectedReport.files.length})</h3>
 
-                {/* BUFFER / LOADING STATE */}
-                {analyzing ? (
-                  <div className="ai-loading-buffer" style={{ textAlign: 'center', padding: '30px', color: '#666', background: '#f8f9fa', borderRadius: '10px', animation: 'fadeIn 0.5s' }}>
-                    <div className="spinner" style={{
-                      width: '40px',
-                      height: '40px',
-                      border: '4px solid #f3f3f3',
-                      borderTop: '4px solid #3498db',
-                      borderRadius: '50%',
-                      animation: 'spin 1s linear infinite',
-                      margin: '0 auto 15px'
-                    }}></div>
-                    <p style={{ fontWeight: '500' }}>✨ Analyzing report with AI...</p>
-                    <small>Extracting insights, identifying medicines, and checking for risks.</small>
+                  <div className="files-list">
+                    {selectedReport.files.map((file, index) => (
+                      <div key={index} className="file-item">
+
+                        {file.mimetype.startsWith('image/') ? (
+                          <div className="file-preview">
+                            <img
+                              src={`${FILE_BASE}/${file.path}`}
+                              alt={file.originalName}
+                            />
+                            <p>{file.originalName}</p>
+                          </div>
+                        ) : (
+                          <div className="file-preview document">
+                            <div className="doc-icon"><FileText size={40} /></div>
+                            <p>{file.originalName}</p>
+                            <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                          </div>
+                        )}
+
+                        {/* 🔽 FORCE DOWNLOAD */}
+                        <button
+                          className="download-btn"
+                          onClick={() => handleDownload(file)}
+                        >
+                          <Download size={14} /> Download
+                        </button>
+
+                      </div>
+                    ))}
                   </div>
-                ) : !selectedReport.aiAnalysis ? (
-                  /* INITIAL ANALYZE BUTTON */
-                  <div className="ai-start-container">
-                    <p>Get instant insights, summaries, and medication reminders from this report.</p>
-                    <button
-                      className="btn btn-ai-analyze"
-                      onClick={() => handleAnalyzeAI(selectedReport._id)}
-                      disabled={analyzing}
-                    >
-                      ✨ Analyze with AI
-                    </button>
-                  </div>
-                ) : (
-                  /* RESULTS DISPLAY */
-                  <div className="ai-results">
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px', gap: '10px' }}>
+                </div>
+
+                {/* AI ANALYSIS SECTION */}
+                <div className="detail-section ai-analysis">
+                  <h3><Bot size={22} /> AI Health Assistant</h3>
+
+                  {/* BUFFER / LOADING STATE */}
+                  {analyzing ? (
+                    <div className="ai-loading-buffer" style={{ textAlign: 'center', padding: '30px', color: '#94a3b8', borderRadius: '10px', animation: 'fadeIn 0.5s' }}>
+                      <div className="spinner" style={{
+                        width: '40px',
+                        height: '40px',
+                        border: '4px solid rgba(255,255,255,0.1)',
+                        borderTop: '4px solid #38bdf8',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        margin: '0 auto 15px'
+                      }}></div>
+                      <p style={{ fontWeight: '500', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        <Sparkles size={18} className="text-accent" /> Analyzing report with AI...
+                      </p>
+                      <small>Extracting insights, identifying medicines, and checking for risks.</small>
+                    </div>
+                  ) : !selectedReport.aiAnalysis ? (
+                    /* INITIAL ANALYZE BUTTON */
+                    <div className="ai-start-container">
+                      <p>Get instant insights, summaries, and medication reminders from this report.</p>
                       <button
-                        style={{ fontSize: '0.8rem', padding: '5px 10px', background: 'transparent', border: '1px solid #aaa', borderRadius: '5px', cursor: 'pointer', color: '#555' }}
-                        onClick={async () => {
-                          if (window.confirm("Send a copy of this analysis to your registered email?")) {
-                            try {
-                              alert("Sending email...");
-                              await aiService.sendEmailNotification(selectedReport._id);
-                              alert("Email sent successfully!");
-                            } catch (e) {
-                              alert("Failed to send email.");
-                            }
-                          }
-                        }}
-                        disabled={analyzing}
-                      >
-                        📧 Email Copy
-                      </button>
-                      <button
-                        style={{ fontSize: '0.8rem', padding: '5px 10px', background: 'transparent', border: '1px solid #aaa', borderRadius: '5px', cursor: 'pointer', color: '#555' }}
+                        className="btn-ai-analyze"
                         onClick={() => handleAnalyzeAI(selectedReport._id)}
                         disabled={analyzing}
                       >
-                        🔄 Re-analyze
+                        <Sparkles size={20} /> Analyze with AI
                       </button>
                     </div>
-
-                    <p><strong>Summary:</strong> {selectedReport.aiAnalysis.summary}</p>
-
-                    {selectedReport.aiAnalysis.keyFindings?.length > 0 && (
-                      <div className="ai-subsection">
-                        <strong>Key Findings:</strong>
-                        <ul>
-                          {selectedReport.aiAnalysis.keyFindings.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
+                  ) : (
+                    /* RESULTS DISPLAY */
+                    <div className="ai-results">
+                      <div className="ai-actions-row">
+                        <button
+                          className="ai-action-btn"
+                          onClick={async () => {
+                            if (window.confirm("Send a copy of this analysis to your registered email?")) {
+                              try {
+                                alert("Sending email...");
+                                await aiService.sendEmailNotification(selectedReport._id);
+                                alert("Email sent successfully!");
+                              } catch (e) {
+                                alert("Failed to send email.");
+                              }
+                            }
+                          }}
+                          disabled={analyzing}
+                        >
+                          <Mail size={14} /> Email Copy
+                        </button>
+                        <button
+                          className="ai-action-btn"
+                          onClick={() => handleAnalyzeAI(selectedReport._id)}
+                          disabled={analyzing}
+                        >
+                          <RefreshCw size={14} /> Re-analyze
+                        </button>
                       </div>
-                    )}
 
-                    {selectedReport.aiAnalysis.recommendations?.length > 0 && (
-                      <div className="ai-subsection">
-                        <strong>Recommendations:</strong>
-                        <ul>
-                          {selectedReport.aiAnalysis.recommendations.map((rec, idx) => (
-                            <li key={idx}>{rec}</li>
-                          ))}
-                        </ul>
+                      <p><strong>Summary:</strong> {selectedReport.aiAnalysis.summary}</p>
+
+                      {selectedReport.aiAnalysis.keyFindings?.length > 0 && (
+                        <div className="ai-subsection">
+                          <strong><Activity size={16} /> Key Findings:</strong>
+                          <ul>
+                            {selectedReport.aiAnalysis.keyFindings.map((item, i) => <li key={i}>{item}</li>)}
+                          </ul>
+                        </div>
+                      )}
+
+                      {selectedReport.aiAnalysis.recommendations?.length > 0 && (
+                        <div className="ai-subsection">
+                          <strong><Sparkles size={16} /> Recommendations:</strong>
+                          <ul>
+                            {selectedReport.aiAnalysis.recommendations.map((rec, idx) => (
+                              <li key={idx}>{rec}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {selectedReport.aiAnalysis.medicines?.length > 0 && (
+                        <div className="ai-subsection">
+                          <strong><Pill size={16} /> Suggested Medications / Supplements:</strong>
+                          <ul>
+                            {selectedReport.aiAnalysis.medicines.map((med, idx) => (
+                              <li key={idx}>{med}</li>
+                            ))}
+                          </ul>
+                          <small className="disclaimer" style={{ display: 'block', marginTop: '10px', color: '#64748b' }}>*Consult a doctor before taking any medication.</small>
+                        </div>
+                      )}
+
+                      <div className="ai-reminders-badge">
+                        <CheckCircle size={16} /> Reminders & Alerts Activated
                       </div>
-                    )}
-
-                    {selectedReport.aiAnalysis.medicines?.length > 0 && (
-                      <div className="ai-subsection">
-                        <strong>💊 Suggested Medications / Supplements:</strong>
-                        <ul>
-                          {selectedReport.aiAnalysis.medicines.map((med, idx) => (
-                            <li key={idx}>{med}</li>
-                          ))}
-                        </ul>
-                        <small className="disclaimer">*Consult a doctor before taking any medication.</small>
-                      </div>
-                    )}
-
-                    <div className="ai-reminders-badge">
-                      ✅ Reminders & Alerts Activated
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
 
-            </div>
-          </div>
-        </div>
-      )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

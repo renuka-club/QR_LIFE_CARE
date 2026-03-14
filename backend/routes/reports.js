@@ -55,13 +55,30 @@ router.post('/upload/:userId', uploadMiddleware, async (req, res) => {
     }
 
     // 2️⃣ Prepare files
-    const files = (req.files || []).map(file => ({
-      filename: file.filename,
-      originalName: file.originalname,
-      path: `uploads/${file.filename}`,
-      size: file.size,
-      mimetype: file.mimetype
-    }));
+    const FileModel = require('../models/File');
+    const files = [];
+
+    for (const file of req.files || []) {
+      const ext = path.extname(file.originalname);
+      const filename = Date.now() + '-' + Math.round(Math.random() * 1E9) + ext;
+
+      // Save file data to database
+      await FileModel.create({
+        filename,
+        originalName: file.originalname,
+        mimetype: file.mimetype,
+        size: file.size,
+        data: file.buffer
+      });
+
+      files.push({
+        filename,
+        originalName: file.originalname,
+        path: `uploads/${filename}`,
+        size: file.size,
+        mimetype: file.mimetype
+      });
+    }
 
     // 3️⃣ Check for existing report (IMPORTANT)
     const existingReport = await Report.findOne({

@@ -21,8 +21,34 @@ app.use(cors({
   credentials: true
 }));
 
-// Serve uploaded files
-app.use('/uploads', express.static('uploads'));
+// Serve uploaded files from Database instead of static folder
+app.get('/uploads/:filename', async (req, res) => {
+  try {
+    const FileModel = require('./models/File');
+    const file = await FileModel.findOne({ filename: req.params.filename });
+
+    if (file) {
+      // Set headers for correct file serving
+      res.set('Content-Type', file.mimetype);
+      res.set('Cache-Control', 'public, max-age=31557600'); // Cache for 1 year
+      return res.send(file.data);
+    }
+
+    // Fallback to disk serving for old files before DB migration
+    const fs = require('fs');
+    const path = require('path');
+    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
+    }
+
+    return res.status(404).send('File not found');
+  } catch (error) {
+    console.error('File serving error:', error);
+    res.status(500).send('Server error serving file');
+  }
+});
 
 // Mount routers
 

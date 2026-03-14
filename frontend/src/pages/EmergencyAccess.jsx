@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MapPin, Phone, FileText, Eye, AlertTriangle, Activity, Pill, User, Volume2, VolumeX, Home, Navigation, PhoneCall, Fingerprint } from 'lucide-react';
 import { startAuthentication } from '@simplewebauthn/browser';
+import { AnimatedSocialIcons } from '../components/ui/floating-action-button';
 import "../styles/emergency.css";
 
 function EmergencyAccess() {
@@ -322,30 +323,41 @@ function EmergencyAccess() {
         </div>
       </div>
 
-      {/* Sticky Emergency Footer - Enhanced */}
-      <div className="sticky-emergency-footer glass-panel">
-        <a href={`tel:${user.emergencyContact}`} className="btn-footer call">
-          <Phone size={20} /> Call Contact
-        </a>
-        <a href="tel:112" className="btn-footer ambulance">
-          <PhoneCall size={20} /> Ambulance
-        </a>
-        <button
-          onClick={handleShareLocation}
-          className="btn-footer location"
-          disabled={locating}
-        >
-          {locating ? <Activity className="animate-spin" size={20} /> : <MapPin size={20} />}
-          {locating ? 'Locating...' : 'Share GPS'}
-        </button>
-        <button
-          onClick={handleViewLiveGPS}
-          className="btn-footer location-view"
-          disabled={viewingGps}
-        >
-          {viewingGps ? <Activity className="animate-spin" size={20} /> : <Navigation size={20} />}
-          {viewingGps ? 'Opening...' : 'View GPS'}
-        </button>
+      {/* Floating Action Button - Replaces the sticky footer */}
+      <div style={{ position: 'fixed', bottom: '30px', left: '0', width: '100%', display: 'flex', justifyContent: 'center', zIndex: 1000, pointerEvents: 'none' }}>
+        <div style={{ pointerEvents: 'auto', background: 'rgba(15,23,42, 0.4)', padding: '10px 15px', borderRadius: '50px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <AnimatedSocialIcons
+            iconSize={22}
+            icons={[
+              {
+                Icon: Phone,
+                href: `tel:${user.emergencyContact}`,
+                color: 'rgb(59, 130, 246)',
+                title: 'Call Emergency Contact'
+              },
+              {
+                Icon: PhoneCall,
+                href: 'tel:112',
+                color: 'rgb(239, 68, 68)',
+                title: 'Call Ambulance'
+              },
+              {
+                Icon: MapPin,
+                onClick: handleShareLocation,
+                color: 'rgb(16, 185, 129)',
+                disabled: locating,
+                title: 'Live Share GPS'
+              },
+              {
+                Icon: Navigation,
+                onClick: handleViewLiveGPS,
+                color: 'rgb(168, 85, 247)',
+                disabled: viewingGps,
+                title: 'Live Location View'
+              }
+            ]}
+          />
+        </div>
       </div>
 
       <div className="space-for-footer"></div>

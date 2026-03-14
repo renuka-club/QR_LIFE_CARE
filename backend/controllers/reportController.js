@@ -2,13 +2,31 @@ exports.uploadReport = async (req, res) => {
   try {
     const { reportType, reportDate, doctorName, hospitalName, notes } = req.body;
 
-    const newFiles = req.files.map(file => ({
-      filename: file.filename,
-      originalName: file.originalname,
-      path: file.path,
-      size: file.size,
-      mimetype: file.mimetype
-    }));
+    const FileModel = require('../models/File');
+    const path = require('path');
+    const newFiles = [];
+
+    for (const file of req.files || []) {
+      const ext = path.extname(file.originalname);
+      const filename = Date.now() + '-' + Math.round(Math.random() * 1E9) + ext;
+
+      // Save file data to database
+      await FileModel.create({
+        filename,
+        originalName: file.originalname,
+        mimetype: file.mimetype,
+        size: file.size,
+        data: file.buffer
+      });
+
+      newFiles.push({
+        filename,
+        originalName: file.originalname,
+        path: `uploads/${filename}`,
+        size: file.size,
+        mimetype: file.mimetype
+      });
+    }
 
     const existingReport = await Report.findOne({
       userId: req.user.userId,

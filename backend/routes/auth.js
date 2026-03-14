@@ -19,7 +19,27 @@ router.post('/upload-photo', protect, upload.single('photo'), async (req, res) =
         }
 
         const user = req.user;
-        user.profilePhoto = `/uploads/${req.file.filename}`;
+        const FileModel = require('../models/File');
+
+        // Remove old photo from DB if exists
+        if (user.profilePhoto) {
+            const oldFilename = user.profilePhoto.replace('/uploads/', '');
+            await FileModel.deleteOne({ filename: oldFilename });
+        }
+
+        const ext = path.extname(req.file.originalname);
+        const filename = Date.now() + ext;
+
+        // Save new photo to DB
+        await FileModel.create({
+            filename,
+            originalName: req.file.originalname,
+            mimetype: req.file.mimetype,
+            size: req.file.size,
+            data: req.file.buffer
+        });
+
+        user.profilePhoto = `/uploads/${filename}`;
         await user.save();
 
         res.json({ success: true, profilePhoto: user.profilePhoto });
@@ -33,11 +53,10 @@ router.post('/upload-photo', protect, upload.single('photo'), async (req, res) =
 router.delete('/remove-photo', protect, async (req, res) => {
     try {
         const user = req.user;
+        const FileModel = require('../models/File');
         if (user.profilePhoto) {
-            const filePath = path.join(__dirname, '..', user.profilePhoto);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
+            const oldFilename = user.profilePhoto.replace('/uploads/', '');
+            await FileModel.deleteOne({ filename: oldFilename });
             user.profilePhoto = '';
             await user.save();
         }
