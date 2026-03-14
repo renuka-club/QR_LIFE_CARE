@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MapPin, Phone, FileText, Eye, AlertTriangle, Activity, Pill, User, Volume2, VolumeX, Home, Navigation, PhoneCall, Fingerprint } from 'lucide-react';
+import { MapPin, Phone, FileText, AlertTriangle, Activity, Pill, User, Volume2, VolumeX, Home, Navigation, PhoneCall, Fingerprint } from 'lucide-react';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { AnimatedSocialIcons } from '../components/ui/floating-action-button';
 import "../styles/emergency.css";

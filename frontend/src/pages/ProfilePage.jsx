@@ -13,7 +13,6 @@ import {
     Calendar,
     Droplet,
     LogOut,
-    Sparkles,
     AlertTriangle,
     Bell,
     Pill,

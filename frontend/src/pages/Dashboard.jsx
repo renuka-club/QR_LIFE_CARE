@@ -7,8 +7,8 @@ import { Html5Qrcode } from 'html5-qrcode';
 import AIChat from '../components/AIChat';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  LogOut, User, Droplet, Clock, Bell, QrCode, Download, Printer,
-  Upload, MessageCircle, Bot, X, Pill, Calendar, AlertTriangle, ShieldAlert, Sparkles
+  LogOut, User, Droplet, Clock, Bell, Download, Printer,
+  Upload, Bot, X, Pill, Calendar, AlertTriangle, ShieldAlert
 } from 'lucide-react';
 import "../styles/dashboard.css";
 
@@ -48,7 +48,7 @@ function Dashboard() {
       authService.logout();
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, loadInsights]);
 
   const loadReminders = useCallback(async () => {
     try {

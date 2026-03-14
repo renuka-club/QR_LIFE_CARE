@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Shield, Zap, ArrowRight, QrCode, HeartPulse, UserPlus, FileText, Smartphone, Lock, Globe, Heart, X, Phone, AlertTriangle, ChevronDown, ChevronUp, Database, Server, CheckCircle, Fingerprint } from 'lucide-react';
+import { Activity, Shield, Zap, ArrowRight, QrCode, HeartPulse, UserPlus, FileText, Smartphone, Globe, X, Phone, AlertTriangle, ChevronDown, ChevronUp, Fingerprint } from 'lucide-react';
 import Header from '../components/Header';
 import { authService } from '../services/auth';
 import './Home.css';
@@ -287,9 +287,9 @@ function Home() {
             <p>Protecting lives through smart technology.</p>
           </div>
           <div className="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Contact Support</a>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/support">Contact Support</a>
           </div>
         </div>
         <div className="footer-bottom">
