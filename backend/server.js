@@ -17,7 +17,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: [
+    process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, '') : null,
+    'http://localhost:3000',
+    'https://qr-life-care.vercel.app'
+  ].filter(Boolean),
   credentials: true
 }));
 
